@@ -1,8 +1,10 @@
-# Statistical Tests — Easy Everyday Video Series
+# Statistical Tests — Easy Everyday Series
 
-Educational videos + Python code for **6 core statistical tests**, explained with simple real-life examples.
+Python code + plots for **6 core statistical tests**, explained with simple real-life examples.
 
 **Repo:** [https://github.com/Vekri/StatticalTests](https://github.com/Vekri/StatticalTests)
+
+> Lesson videos are kept **local only** (not hosted on GitHub).
 
 ---
 
@@ -14,17 +16,14 @@ python python/01_z_test_easy_example.py
 # ... or run any script in /python
 ```
 
-Videos are in the [`videos/`](videos/) folder. Open any `.mp4` to watch (voice narration included).
-
 ---
 
-## All 6 videos (one by one)
+## All 6 tests (one by one)
 
 ### 1. One-Sample Z-Test — Smartphone Battery Claim
 
 | | |
 |---|---|
-| **Video** | [`videos/01_Z_Test_Easy_Example.mp4`](videos/01_Z_Test_Easy_Example.mp4) |
 | **Python** | [`python/01_z_test_easy_example.py`](python/01_z_test_easy_example.py) |
 | **Plot** | [`plots/01_z_test_easy_distribution.png`](plots/01_z_test_easy_distribution.png) |
 
@@ -39,7 +38,6 @@ OmniPhone advertises **24.0 hours** of battery life. A lab tests **n = 64** phon
 
 | | |
 |---|---|
-| **Video** | [`videos/02_T_Test_Easy_Example.mp4`](videos/02_T_Test_Easy_Example.mp4) |
 | **Python** | [`python/02_t_test_easy_example.py`](python/02_t_test_easy_example.py) |
 | **Plot** | [`plots/02_t_test_easy_distribution.png`](plots/02_t_test_easy_distribution.png) |
 
@@ -54,7 +52,6 @@ Usual quiz mean is **70**. Only **n = 12** students try a Berry Brain Smoothie a
 
 | | |
 |---|---|
-| **Video** | [`videos/03_Chi_Square_Easy_Example.mp4`](videos/03_Chi_Square_Easy_Example.mp4) |
 | **Python** | [`python/03_chi_square_easy_example.py`](python/03_chi_square_easy_example.py) |
 | **Plot** | [`plots/03_chi_square_easy_distribution.png`](plots/03_chi_square_easy_distribution.png) |
 
@@ -69,7 +66,6 @@ Candy maker claims equal **20%** of 5 colors. You open **N = 100** candies: Red 
 
 | | |
 |---|---|
-| **Video** | [`videos/04_ANOVA_F_Test_Easy_Example.mp4`](videos/04_ANOVA_F_Test_Easy_Example.mp4) |
 | **Python** | [`python/04_anova_f_test_easy_example.py`](python/04_anova_f_test_easy_example.py) |
 | **Plot** | [`plots/04_anova_f_easy_distribution.png`](plots/04_anova_f_easy_distribution.png) |
 
@@ -84,7 +80,6 @@ Candy maker claims equal **20%** of 5 colors. You open **N = 100** candies: Red 
 
 | | |
 |---|---|
-| **Video** | [`videos/05_Correlation_Easy_Example.mp4`](videos/05_Correlation_Easy_Example.mp4) |
 | **Python** | [`python/05_correlation_easy_example.py`](python/05_correlation_easy_example.py) |
 | **Plot** | [`plots/05_correlation_easy_distribution.png`](plots/05_correlation_easy_distribution.png) |
 
@@ -99,7 +94,6 @@ Advisor surveys **n = 35** students: weekly study hours (X) vs exam score (Y). P
 
 | | |
 |---|---|
-| **Video** | [`videos/06_AB_Testing_Easy_Example.mp4`](videos/06_AB_Testing_Easy_Example.mp4) |
 | **Python** | [`python/06_ab_testing_easy_example.py`](python/06_ab_testing_easy_example.py) |
 | **Plot** | [`plots/06_ab_testing_easy_distribution.png`](plots/06_ab_testing_easy_distribution.png) |
 
@@ -133,11 +127,10 @@ Two-proportion Z-test decides if the **+2.5 pp** lift is real.
 StatticalTests/
 ├── README.md
 ├── requirements.txt
-├── videos/          # 6 narrated MP4 lessons
 ├── python/          # Matching scipy/statsmodels scripts
 └── plots/           # Distribution / chart PNGs
 ```
 
 ## License
 
-Educational use. Feel free to watch, fork, and learn.
+Educational use. Feel free to fork and learn.

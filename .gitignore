@@ -5,7 +5,7 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# YouTube uploads stay local only (do not push)
-00_YouTube_*.mp4
-videos/00_YouTube_*.mp4
+# All videos stay local only (do not push to GitHub)
+*.mp4
+videos/
 generate_youtube_*.py
