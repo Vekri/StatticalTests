@@ -18,7 +18,10 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from scipy import stats
 
 ROOT = Path(__file__).resolve().parent.parent
-SAMPLE_DIR = ROOT / "streamlit_app" / "sample_data"
+# Prefer samples bundled next to this file (Vercel serverless), then Streamlit folder
+_API_SAMPLES = Path(__file__).resolve().parent / "sample_data"
+_STREAMLIT_SAMPLES = ROOT / "streamlit_app" / "sample_data"
+SAMPLE_DIR = _API_SAMPLES if _API_SAMPLES.exists() else _STREAMLIT_SAMPLES
 PUBLIC_DIR = ROOT / "public"
 
 SAMPLES = {
@@ -47,19 +50,47 @@ def _reject(cond: bool) -> str:
     return "REJECT H0" if cond else "FAIL TO REJECT H0"
 
 
+def _sample_payload(sample_id: str) -> dict[str, Any]:
+    if sample_id not in SAMPLES:
+        raise HTTPException(404, f"Unknown sample: {sample_id}")
+    path = SAMPLE_DIR / SAMPLES[sample_id]
+    if not path.exists():
+        raise HTTPException(
+            404,
+            f"Sample file missing on server: {path} (cwd files may be incomplete)",
+        )
+    df = pd.read_csv(path)
+    return {
+        "id": sample_id,
+        "file": SAMPLES[sample_id],
+        "columns": list(df.columns),
+        "preview": df.head(15).to_dict(orient="records"),
+        "csv": path.read_text(encoding="utf-8"),
+        "n_rows": len(df),
+    }
+
+
 @app.get("/")
 def home():
-    index = PUBLIC_DIR / "index.html"
-    if index.exists():
-        return HTMLResponse(index.read_text(encoding="utf-8"))
-    return JSONResponse({"message": "Open /docs or deploy with public/index.html"})
+    # Prefer bundled HTML next to this file, then public/
+    for candidate in (Path(__file__).parent / "index.html", PUBLIC_DIR / "index.html"):
+        if candidate.exists():
+            return HTMLResponse(candidate.read_text(encoding="utf-8"))
+    return JSONResponse({"message": "UI missing. API is up — try /health"})
 
 
+@app.get("/health")
 @app.get("/api/health")
 def health():
-    return {"ok": True, "samples": list(SAMPLES.keys())}
+    return {
+        "ok": True,
+        "samples": list(SAMPLES.keys()),
+        "sample_dir": str(SAMPLE_DIR),
+        "sample_dir_exists": SAMPLE_DIR.exists(),
+    }
 
 
+@app.get("/samples")
 @app.get("/api/samples")
 def list_samples():
     out = []
@@ -74,24 +105,13 @@ def list_samples():
     return {"samples": out}
 
 
+@app.get("/sample/{sample_id}")
 @app.get("/api/sample/{sample_id}")
 def get_sample(sample_id: str):
-    if sample_id not in SAMPLES:
-        raise HTTPException(404, f"Unknown sample: {sample_id}")
-    path = SAMPLE_DIR / SAMPLES[sample_id]
-    if not path.exists():
-        raise HTTPException(404, "Sample file missing")
-    df = pd.read_csv(path)
-    return {
-        "id": sample_id,
-        "file": SAMPLES[sample_id],
-        "columns": list(df.columns),
-        "preview": df.head(15).to_dict(orient="records"),
-        "csv": path.read_text(encoding="utf-8"),
-        "n_rows": len(df),
-    }
+    return _sample_payload(sample_id)
 
 
+@app.post("/run")
 @app.post("/api/run")
 async def run_test(
     test: str = Form(...),

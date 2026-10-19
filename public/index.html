@@ -280,11 +280,18 @@
     $("test").onchange = syncSampleToTest;
     $("sampleId").onchange = () => {};
 
+    async function apiFetch(path, options) {
+      // Vercel mounts api/index.py under /api and may strip the prefix
+      let res = await fetch("/api" + path, options);
+      if (res.status === 404) res = await fetch(path, options);
+      return res;
+    }
+
     $("loadSample").onclick = async () => {
       const id = $("sampleId").value;
-      const res = await fetch(`/api/sample/${id}`);
-      const data = await res.json();
-      if (!res.ok) { alert(data.detail || "Failed"); return; }
+      const res = await apiFetch(`/sample/${id}`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { alert(data.detail || "Failed to load sample"); return; }
       showPreview(data.preview, data.columns, `${data.file} · ${data.n_rows} rows`);
       $("test").value = id;
       renderParams();
@@ -303,8 +310,8 @@
         if (!f) { alert("Choose a CSV file"); return; }
         fd.append("file", f);
       }
-      const res = await fetch("/api/run", { method: "POST", body: fd });
-      const data = await res.json();
+      const res = await apiFetch("/run", { method: "POST", body: fd });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         $("results").innerHTML = `<div class="decision fail">${data.detail || JSON.stringify(data)}</div>`;
         return;

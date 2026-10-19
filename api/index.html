@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Statistical Tests Lab</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --panel: #0f172a;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #34d399;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --ok: #10b981;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, #123 0%, var(--bg) 55%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: #0f172acc;
+      backdrop-filter: blur(8px);
+      position: sticky; top: 0; z-index: 10;
+    }
+    header h1 { margin: 0; font-size: 1.35rem; color: var(--accent); }
+    header p { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.95rem; }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.25rem 1.5rem 3rem;
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 320px 1fr;
+    }
+    @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.1rem;
+    }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin: 0.7rem 0 0.3rem; }
+    select, input, button, textarea {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #1e293b;
+      color: var(--text);
+      font: inherit;
+    }
+    button {
+      background: #059669;
+      border-color: #34d399;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    button:hover { filter: brightness(1.08); }
+    button.secondary { background: #1e293b; font-weight: 600; margin-top: 0.5rem; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 0.6rem;
+      margin: 0.8rem 0;
+    }
+    .metric {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.65rem;
+    }
+    .metric b { display: block; font-size: 0.72rem; color: var(--muted); }
+    .metric span { font-size: 1.05rem; font-weight: 700; }
+    .decision {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      border: 1px solid;
+      margin: 0.8rem 0;
+      font-weight: 700;
+    }
+    .decision.reject { background: #14532d55; border-color: var(--ok); color: #bbf7d0; }
+    .decision.fail { background: #1e3a5f55; border-color: #38bdf8; color: #bae6fd; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { border-bottom: 1px solid var(--border); padding: 0.4rem 0.35rem; text-align: left; }
+    th { color: var(--muted); font-weight: 600; }
+    .muted { color: var(--muted); font-size: 0.85rem; }
+    pre {
+      background: #020617;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem;
+      overflow: auto;
+      font-size: 0.8rem;
+    }
+    .hidden { display: none; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Statistical Tests Lab</h1>
+    <p>Load sample CSV templates or upload your own — run Z, t, Chi-Square, ANOVA, Correlation, A/B.</p>
+  </header>
+
+  <main>
+    <aside class="card">
+      <label>Test</label>
+      <select id="test">
+        <option value="z_test">Z-Test (One-Sample)</option>
+        <option value="t_test">t-Test (One-Sample)</option>
+        <option value="chi_square">Chi-Square (GOF)</option>
+        <option value="anova">ANOVA (One-Way)</option>
+        <option value="correlation">Correlation &amp; Regression</option>
+        <option value="ab_test">A/B Test</option>
+      </select>
+
+      <label>Data source</label>
+      <select id="source">
+        <option value="sample">Use sample template CSV</option>
+        <option value="upload">Upload my CSV</option>
+      </select>
+
+      <div id="sampleBox">
+        <label>Sample template</label>
+        <select id="sampleId">
+          <option value="z_test">01 — Battery (Z)</option>
+          <option value="t_test">02 — Smoothie (t)</option>
+          <option value="chi_square">03 — Candy (Chi-Square)</option>
+          <option value="anova">04 — Study methods (ANOVA)</option>
+          <option value="correlation">05 — Hours vs grade (Corr)</option>
+          <option value="ab_test">06 — Buy button (A/B)</option>
+        </select>
+        <button class="secondary" type="button" id="loadSample">Preview sample</button>
+      </div>
+
+      <div id="uploadBox" class="hidden">
+        <label>Upload CSV</label>
+        <input type="file" id="file" accept=".csv,text/csv" />
+      </div>
+
+      <label>Significance α</label>
+      <input type="number" id="alpha" value="0.05" min="0.01" max="0.1" step="0.01" />
+
+      <div id="paramFields"></div>
+
+      <button type="button" id="runBtn">Run test</button>
+      <p class="muted" style="margin-top:0.8rem">Local Streamlit: <code>streamlit run streamlit_app/app.py</code></p>
+    </aside>
+
+    <section>
+      <div class="card">
+        <h3 style="margin:0 0 0.5rem">Data preview</h3>
+        <div id="preview" class="muted">Load a sample or upload a CSV.</div>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <h3 style="margin:0 0 0.5rem">Results</h3>
+        <div id="results" class="muted">Run a test to see metrics and decision.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const defaults = {
+      z_test: { mu0: 24, sigma: 2, value_col: "battery_hours" },
+      t_test: { mu0: 70, value_col: "quiz_score" },
+      chi_square: { cat_col: "color", count_col: "observed_count" },
+      anova: { group_col: "study_method", value_col: "exam_score" },
+      correlation: { x_col: "study_hours", y_col: "exam_score" },
+      ab_test: { variant_col: "variant", converted_col: "converted" },
+    };
+
+    function syncSampleToTest() {
+      $("sampleId").value = $("test").value;
+      renderParams();
+    }
+
+    function renderParams() {
+      const t = $("test").value;
+      const d = defaults[t] || {};
+      let html = "";
+      if (t === "z_test") {
+        html = `
+          <label>Value column</label><input id="p_value_col" value="${d.value_col}" />
+          <div class="row">
+            <div><label>μ₀</label><input id="p_mu0" type="number" value="${d.mu0}" step="any" /></div>
+            <div><label>Known σ</label><input id="p_sigma" type="number" value="${d.sigma}" step="any" /></div>
+          </div>`;
+      } else if (t === "t_test") {
+        html = `
+          <label>Value column</label><input id="p_value_col" value="${d.value_col}" />
+          <label>μ₀</label><input id="p_mu0" type="number" value="${d.mu0}" step="any" />`;
+      } else if (t === "chi_square") {
+        html = `
+          <label>Category column</label><input id="p_cat_col" value="${d.cat_col}" />
+          <label>Count column</label><input id="p_count_col" value="${d.count_col}" />`;
+      } else if (t === "anova") {
+        html = `
+          <label>Group column</label><input id="p_group_col" value="${d.group_col}" />
+          <label>Value column</label><input id="p_value_col" value="${d.value_col}" />`;
+      } else if (t === "correlation") {
+        html = `
+          <label>X column</label><input id="p_x_col" value="${d.x_col}" />
+          <label>Y column</label><input id="p_y_col" value="${d.y_col}" />`;
+      } else if (t === "ab_test") {
+        html = `
+          <label>Variant column</label><input id="p_variant_col" value="${d.variant_col}" />
+          <label>Converted column (0/1)</label><input id="p_converted_col" value="${d.converted_col}" />`;
+      }
+      $("paramFields").innerHTML = html;
+    }
+
+    function collectParams() {
+      const t = $("test").value;
+      const g = (id) => ($(id) ? $(id).value : null);
+      if (t === "z_test") return { value_col: g("p_value_col"), mu0: +g("p_mu0"), sigma: +g("p_sigma") };
+      if (t === "t_test") return { value_col: g("p_value_col"), mu0: +g("p_mu0") };
+      if (t === "chi_square") return { cat_col: g("p_cat_col"), count_col: g("p_count_col") };
+      if (t === "anova") return { group_col: g("p_group_col"), value_col: g("p_value_col") };
+      if (t === "correlation") return { x_col: g("p_x_col"), y_col: g("p_y_col") };
+      if (t === "ab_test") return { variant_col: g("p_variant_col"), converted_col: g("p_converted_col") };
+      return {};
+    }
+
+    function showPreview(rows, columns, meta) {
+      if (!rows || !rows.length) {
+        $("preview").innerHTML = "<span class='muted'>No rows</span>";
+        return;
+      }
+      const cols = columns || Object.keys(rows[0]);
+      let html = meta ? `<p class="muted">${meta}</p>` : "";
+      html += "<table><thead><tr>" + cols.map(c => `<th>${c}</th>`).join("") + "</tr></thead><tbody>";
+      rows.slice(0, 12).forEach(r => {
+        html += "<tr>" + cols.map(c => `<td>${r[c] ?? ""}</td>`).join("") + "</tr>";
+      });
+      html += "</tbody></table>";
+      $("preview").innerHTML = html;
+    }
+
+    function showResult(data) {
+      const reject = data.decision && data.decision.startsWith("REJECT");
+      let html = `<div class="decision ${reject ? "reject" : "fail"}">${data.decision}<br><span style="font-weight:500">${data.detail || ""}</span></div>`;
+      html += `<p><b>${data.test}</b> · source: ${data.source} · n=${data.n_rows}</p>`;
+      html += '<div class="metrics">';
+      Object.entries(data.metrics || {}).forEach(([k, v]) => {
+        const val = typeof v === "number" ? (Math.abs(v) < 0.0001 && v !== 0 ? v.toExponential(3) : Number(v).toPrecision(4)) : v;
+        html += `<div class="metric"><b>${k}</b><span>${val}</span></div>`;
+      });
+      html += "</div>";
+      if (data.formula) html += `<p class="muted">${data.formula}</p>`;
+      if (data.table) {
+        html += "<table><thead><tr><th>category</th><th>observed</th><th>expected</th></tr></thead><tbody>";
+        data.table.forEach(r => {
+          html += `<tr><td>${r.category}</td><td>${r.observed}</td><td>${r.expected.toFixed(2)}</td></tr>`;
+        });
+        html += "</tbody></table>";
+      }
+      if (data.summary) {
+        html += "<pre>" + JSON.stringify(data.summary, null, 2) + "</pre>";
+      }
+      $("results").innerHTML = html;
+      if (data.preview) showPreview(data.preview, data.columns, `Showing preview (${data.n_rows} rows)`);
+    }
+
+    $("source").onchange = () => {
+      const up = $("source").value === "upload";
+      $("uploadBox").classList.toggle("hidden", !up);
+      $("sampleBox").classList.toggle("hidden", up);
+    };
+    $("test").onchange = syncSampleToTest;
+    $("sampleId").onchange = () => {};
+
+    async function apiFetch(path, options) {
+      // Vercel mounts api/index.py under /api and may strip the prefix
+      let res = await fetch("/api" + path, options);
+      if (res.status === 404) res = await fetch(path, options);
+      return res;
+    }
+
+    $("loadSample").onclick = async () => {
+      const id = $("sampleId").value;
+      const res = await apiFetch(`/sample/${id}`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) { alert(data.detail || "Failed to load sample"); return; }
+      showPreview(data.preview, data.columns, `${data.file} · ${data.n_rows} rows`);
+      $("test").value = id;
+      renderParams();
+    };
+
+    $("runBtn").onclick = async () => {
+      $("results").innerHTML = "<span class='muted'>Running…</span>";
+      const fd = new FormData();
+      fd.append("test", $("test").value);
+      fd.append("alpha", $("alpha").value);
+      fd.append("params", JSON.stringify(collectParams()));
+      if ($("source").value === "sample") {
+        fd.append("sample_id", $("sampleId").value);
+      } else {
+        const f = $("file").files[0];
+        if (!f) { alert("Choose a CSV file"); return; }
+        fd.append("file", f);
+      }
+      const res = await apiFetch("/run", { method: "POST", body: fd });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        $("results").innerHTML = `<div class="decision fail">${data.detail || JSON.stringify(data)}</div>`;
+        return;
+      }
+      showResult(data);
+    };
+
+    renderParams();
+    // auto-load default sample preview
+    $("loadSample").click();
+  </script>
+</body>
+</html>
