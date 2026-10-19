@@ -1,10 +1,22 @@
 # Statistical Tests — Easy Everyday Series
 
-Python code + plots for **6 core statistical tests**, explained with simple real-life examples.
+Python code + plots + interactive lab for **6 core statistical tests**, explained with simple real-life examples.
 
 **Repo:** [https://github.com/Vekri/StatticalTests](https://github.com/Vekri/StatticalTests)
 
 > Lesson videos are kept **local only** (not hosted on GitHub).
+
+---
+
+## Interactive lab
+
+| Mode | How to run |
+|------|------------|
+| **Local Streamlit** | `streamlit run streamlit_app/app.py` → http://localhost:8501 |
+| **Local FastAPI (Vercel-compatible)** | `uvicorn api.index:app --reload` → http://localhost:8000 |
+| **Vercel** | Deploy this repo; Streamlit itself cannot run on Vercel, so production uses the FastAPI + web UI |
+
+Sample CSV templates live in [`streamlit_app/sample_data/`](streamlit_app/sample_data/).
 
 ---
 
@@ -14,6 +26,12 @@ Python code + plots for **6 core statistical tests**, explained with simple real
 pip install -r requirements.txt
 python python/01_z_test_easy_example.py
 # ... or run any script in /python
+
+# Streamlit lab (local)
+streamlit run streamlit_app/app.py
+
+# Web lab (same tests — what Vercel hosts)
+uvicorn api.index:app --reload --port 8000
 ```
 
 ---
