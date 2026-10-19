@@ -1,0 +1,6 @@
+temp_audio*/
+temp_video*
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
