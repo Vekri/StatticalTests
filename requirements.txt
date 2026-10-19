@@ -1,9 +1,6 @@
-numpy>=1.24
-scipy>=1.11
-matplotlib>=3.7
-statsmodels>=0.14
-pandas>=2.0
-streamlit>=1.28
+# Vercel / FastAPI production (keep lean — function size limit)
+numpy>=1.24,<2.3
+scipy>=1.11,<1.16
+pandas>=2.0,<2.3
 fastapi>=0.110
-uvicorn>=0.27
 python-multipart>=0.0.9
