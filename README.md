@@ -6,19 +6,18 @@ Educational videos + Python code for **6 core statistical tests**, explained wit
 
 ---
 
-## YouTube overview (under 60 seconds)
+## YouTube Shorts + overview (under 60 seconds)
 
-Start here — a short high-level intro to all 6 tests:
+Start here — high-level intro to all 6 tests:
 
-| | |
-|---|---|
-| **Video** | [`videos/00_YouTube_Overview_60s.mp4`](videos/00_YouTube_Overview_60s.mp4) |
-| **Length** | ~40 seconds (under 60s cutoff) |
-| **What it covers** | One-line purpose of Z-Test, t-Test, Chi-Square, ANOVA, Correlation, and A/B Testing |
+| Format | File | Specs |
+|---|---|---|
+| **YouTube Shorts (vertical)** | [`videos/00_YouTube_Shorts_60s.mp4`](videos/00_YouTube_Shorts_60s.mp4) | **1080×1920** · ~30s · upload as Short |
+| **Landscape overview** | [`videos/00_YouTube_Overview_60s.mp4`](videos/00_YouTube_Overview_60s.mp4) | 1280×720 · ~40s |
 
-**Suggested YouTube title:** `6 Statistical Tests Explained in 60 Seconds`  
-**Suggested YouTube description:**  
-Quick overview of Z-test, t-test, Chi-square, ANOVA, Correlation, and A/B testing with everyday examples. Full lesson videos + Python code in this repo.
+**Suggested Shorts title:** `6 Statistical Tests in 60 Seconds #shorts`  
+**Suggested Shorts description:**  
+Z-test · t-test · Chi-square · ANOVA · Correlation · A/B testing — what each one is for, with everyday examples. Full lessons + Python → github.com/Vekri/StatticalTests
 
 ---
 
