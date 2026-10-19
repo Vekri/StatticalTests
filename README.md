@@ -14,7 +14,7 @@ Python code + plots + interactive lab for **6 core statistical tests**, explaine
 |------|------------|
 | **Local Streamlit** | `streamlit run streamlit_app/app.py` → http://localhost:8501 |
 | **Local FastAPI (Vercel-compatible)** | `uvicorn api.index:app --reload` → http://localhost:8000 |
-| **Vercel** | Deploy this repo; Streamlit itself cannot run on Vercel, so production uses the FastAPI + web UI |
+| **Vercel (live)** | https://stattical-tests.vercel.app — Streamlit cannot run on Vercel, so production uses the FastAPI + web UI |
 
 Sample CSV templates live in [`streamlit_app/sample_data/`](streamlit_app/sample_data/).
 
